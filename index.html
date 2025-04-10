@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuesto Clínica Veterinaria Larraín</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4db6ac;
+            padding-bottom: 10px;
+        }
+        .logo {
+            width: 150px;
+            margin-right: 20px;
+        }
+        .clinic-info h1 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+        }
+        .clinic-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .client-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .items-container {
+            margin-bottom: 20px;
+        }
+        .item-selection {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .item-selection select {
+            flex: 2;
+        }
+        .item-selection input {
+            flex: 1;
+            max-width: 100px;
+        }
+        .item-selection button {
+            padding: 8px 15px;
+            background-color: #4db6ac;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .totals {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .totals .form-group:last-child {
+            grid-column: 1 / -1;
+        }
+        .tax-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .tax-checkbox input {
+            width: auto;
+        }
+        .print-btn {
+            padding: 10px 20px;
+            background-color: #4db6ac;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .selected-items {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <!-- Simple logo recreation -->
+                <svg viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="75" cy="40" rx="70" ry="35" fill="white" stroke="#4db6ac" stroke-width="3"/>
+                    <text x="40" y="45" font-family="Arial" font-size="20" fill="#795548">Larraín</text>
+                    <path d="M30,40 C30,30 35,25 40,25 C45,25 50,30 50,40" fill="none" stroke="#795548" stroke-width="2"/>
+                    <circle cx="35" cy="35" r="5" fill="#795548"/>
+                </svg>
+            </div>
+            <div class="clinic-info">
+                <h1>CLÍNICA VETERINARIA LARRAÍN</h1>
+                <p>Colon 24, Chiguayante</p>
+                <p>Fono 41 2367398</p>
+                <p><a href="http://www.clinicaveterinariaalarrain.com">www.clinicaveterinariaalarrain.com</a></p>
+            </div>
+        </div>
+
+        <div class="client-info">
+            <div class="form-group">
+                <label for="propietario">Propietario:</label>
+                <input type="text" id="propietario" name="propietario">
+            </div>
+            <div class="form-group">
+                <label for="paciente">Paciente:</label>
+                <input type="text" id="paciente" name="paciente">
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha">
+            </div>
+            <div class="form-group">
+                <label for="medico">Médico Tratante:</label>
+                <input type="text" id="medico" name="medico">
+            </div>
+        </div>
+
+        <div class="items-container">
+            <h2>Agregar Items al Presupuesto</h2>
+            <div class="item-selection">
+                <select id="item-select">
+                    <option value="">Seleccionar ítem...</option>
+                    <!-- Items will be added here via JavaScript -->
+                </select>
+                <input type="number" id="cantidad" min="1" value="1" placeholder="Cantidad">
+                <button id="agregar-item">Agregar</button>
+            </div>
+
+            <div class="selected-items">
+                <table id="items-table">
+                    <thead>
+                        <tr>
+                            <th>Ítem</th>
+                            <th>Valor $</th>
+                            <th>Cantidad</th>
+                            <th>Total</th>
+                            <th>Exento IVA</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Selected items will appear here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="totals">
+            <div class="form-group">
+                <label for="subtotal">Subtotal:</label>
+                <input type="text" id="subtotal" readonly>
+            </div>
+            <div class="form-group">
+                <label for="total-exento">Total Exento:</label>
+                <input type="text" id="total-exento" readonly>
+            </div>
+            <div class="form-group">
+                <label for="total-afecto">Total Afecto:</label>
+                <input type="text" id="total-afecto" readonly>
+            </div>
+            <div class="form-group">
+                <label for="iva">IVA (19%):</label>
+                <input type="text" id="iva" readonly>
+                <div class="tax-checkbox">
+                    <input type="checkbox" id="aplicar-iva" checked>
+                    <label for="aplicar-iva">Aplicar IVA</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="total">TOTAL:</label>
+                <input type="text" id="total" readonly>
+            </div>
+            <div class="form-group">
+                <label for="abono">ABONO:</label>
+                <input type="number" id="abono" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label for="saldo">SALDO:</label>
+                <input type="text" id="saldo" readonly>
+            </div>
+        </div>
+
+        <button class="print-btn" id="imprimir">Imprimir Presupuesto</button>
+    </div>
+
+    <script>
+        // Lista completa de servicios e insumos
+        const servicios = [
+            { id: 1, nombre: "Consulta", valor: 18000, exentoIva: true },
+            { id: 2, nombre: "Cirugía", valor: 80000, exentoIva: false },
+            { id: 3, nombre: "Pabellón gato", valor: 35000, exentoIva: false },
+            { id: 4, nombre: "Pabellón perro", valor: 50000, exentoIva: false },
+            { id: 5, nombre: "Anestesia inhalatoria", valor: 60000, exentoIva: true },
+            { id: 6, nombre: "Hospitalización", valor: 35000, exentoIva: false },
+            { id: 7, nombre: "Hosp. post cirugía", valor: 20000, exentoIva: false },
+            { id: 8, nombre: "Hotel perro", valor: 20000, exentoIva: false },
+            { id: 9, nombre: "Hotel gato", valor: 15000, exentoIva: false },
+            { id: 10, nombre: "Hemograma", valor: 12500, exentoIva: false },
+            { id: 11, nombre: "Perfil bioquímico", valor: 35000, exentoIva: false },
+            { id: 12, nombre: "Punción hipoplasma/insumo", valor: 12000, exentoIva: false },
+            { id: 13, nombre: "Proced.menor c/sedación", valor: 20000, exentoIva: false },
+            { id: 14, nombre: "Test Parvovirus brit", valor: 14900, exentoIva: false },
+            { id: 15, nombre: "Test Sida-Leucemia brit", valor: 12900, exentoIva: false },
+            { id: 16, nombre: "Radiografía c/anestesia", valor: 75000, exentoIva: true },
+            { id: 17, nombre: "Radiografía s/anestesia", valor: 50000, exentoIva: true },
+            { id: 18, nombre: "Ecografía", valor: 55000, exentoIva: true },
+            { id: 19, nombre: "Ecografía Fast", valor: 30000, exentoIva: true },
+            { id: 20, nombre: "Control ecográfico", valor: 30000, exentoIva: true },
+            { id: 21, nombre: "Examen de orina", valor: 12000, exentoIva: false },
+            { id: 22, nombre: "Sondaje gato", valor: 55000, exentoIva: false },
+            { id: 23, nombre: "Tiempo coagulación", valor: 10000, exentoIva: false },
+            { id: 24, nombre: "Toma muestra", valor: 6000, exentoIva: false },
+            { id: 25, nombre: "Laboratorio tecnicalmed", valor: 1, exentoIva: false },
+            { id: 26, nombre: "Laboratorio Maiken", valor: 1, exentoIva: false },
+            { id: 27, nombre: "Acedan cc", valor: 1000, exentoIva: false },
+            { id: 28, nombre: "Acetidrona cc", valor: 3000, exentoIva: false },
+            { id: 29, nombre: "Alimento CN Pro Plan", valor: 4100, exentoIva: false },
+            { id: 30, nombre: "Alimento intestinal lata", valor: 5200, exentoIva: false },
+            { id: 31, nombre: "Alimento Lata urinary felin", valor: 3800, exentoIva: false },
+            { id: 32, nombre: "Alimento recovery", valor: 4200, exentoIva: false },
+            { id: 33, nombre: "Alimento pro plan puppy", valor: 4100, exentoIva: false },
+            { id: 34, nombre: "Aminofilina amp", valor: 1500, exentoIva: false },
+            { id: 35, nombre: "Amoxicilina cc", valor: 900, exentoIva: false },
+            { id: 36, nombre: "Atropina amp", valor: 800, exentoIva: false },
+            { id: 37, nombre: "Bajada suero unid", valor: 1500, exentoIva: false },
+            { id: 38, nombre: "Bajada c/equipo infusion", valor: 3500, exentoIva: false },
+            { id: 39, nombre: "Bicarbonato sodio amp", valor: 1600, exentoIva: false },
+            { id: 40, nombre: "Baytril cc", valor: 1100, exentoIva: false },
+            { id: 41, nombre: "Bupivacaina amp 10cc", valor: 2300, exentoIva: false },
+            { id: 42, nombre: "Buscapina cc", valor: 1100, exentoIva: false },
+            { id: 43, nombre: "Calcio isotonico cc", valor: 900, exentoIva: false },
+            { id: 44, nombre: "Caliercortin cc", valor: 1000, exentoIva: false },
+            { id: 45, nombre: "Cateter 20 – 22g", valor: 2500, exentoIva: false },
+            { id: 46, nombre: "Cefalexina cc", valor: 1100, exentoIva: false },
+            { id: 47, nombre: "Cerenia cc", valor: 5200, exentoIva: false },
+            { id: 48, nombre: "Cianocobaina amp", valor: 900, exentoIva: false },
+            { id: 49, nombre: "Clindamicina amp", valor: 3500, exentoIva: false },
+            { id: 50, nombre: "Clorfenamine cc", valor: 1100, exentoIva: false },
+            { id: 51, nombre: "Cloruro de calcio amp", valor: 1100, exentoIva: false },
+            { id: 52, nombre: "Cloruro de potasio", valor: 2200, exentoIva: false },
+            { id: 53, nombre: "Cobactan cc", valor: 1200, exentoIva: false },
+            { id: 54, nombre: "Coforta iny", valor: 800, exentoIva: false },
+            { id: 55, nombre: "Contralac comp", valor: 1000, exentoIva: false },
+            { id: 56, nombre: "Convenia cc", valor: 23000, exentoIva: false },
+            { id: 57, nombre: "Collar isabelino 10 cm", valor: 4800, exentoIva: false },
+            { id: 58, nombre: "Collar isabelino 12.5cm", valor: 6100, exentoIva: false },
+            { id: 59, nombre: "Colla isabelino 15 cm", valor: 6700, exentoIva: false },
+            { id: 60, nombre: "Colla isabelino 20 cm", valor: 7900, exentoIva: false },
+            { id: 61, nombre: "Collar isabelino 25 cm", valor: 10500, exentoIva: false },
+            { id: 62, nombre: "Colla isabelino 30 cm", valor: 13600, exentoIva: false },
+            { id: 63, nombre: "Dexa 20 cc", valor: 3100, exentoIva: false },
+            { id: 64, nombre: "Dexafort cc", valor: 1000, exentoIva: false },
+            { id: 65, nombre: "Diazepam amp 2 cc", valor: 1500, exentoIva: false },
+            { id: 66, nombre: "Dipirona cc", valor: 800, exentoIva: false },
+            { id: 67, nombre: "Dispert dex cc", valor: 1000, exentoIva: false },
+            { id: 68, nombre: "Ergometrina amp", valor: 1000, exentoIva: false },
+            { id: 69, nombre: "Famotidina amp", valor: 1100, exentoIva: false },
+            { id: 70, nombre: "Fitomenadione amp(vt K)", valor: 1900, exentoIva: false },
+            { id: 71, nombre: "Furosemida amp", valor: 1400, exentoIva: false },
+            { id: 72, nombre: "Gelaspan", valor: 26500, exentoIva: false },
+            { id: 73, nombre: "Gentamicina cc", valor: 800, exentoIva: false },
+            { id: 74, nombre: "Gluconato de calcio amp", valor: 3400, exentoIva: false },
+            { id: 75, nombre: "Gorban cc", valor: 800, exentoIva: false },
+            { id: 76, nombre: "Guantes examen", valor: 900, exentoIva: false },
+            { id: 77, nombre: "Hasvun cc", valor: 1000, exentoIva: false },
+            { id: 78, nombre: "Hematon B12", valor: 1100, exentoIva: false },
+            { id: 79, nombre: "Hemograg cc", valor: 3100, exentoIva: false },
+            { id: 80, nombre: "Hierro cc", valor: 900, exentoIva: false },
+            { id: 81, nombre: "Jeringa 10cc", valor: 2500, exentoIva: false },
+            { id: 82, nombre: "Jeringa 5 cc", valor: 300, exentoIva: false },
+            { id: 83, nombre: "jeringa 3 cc", valor: 300, exentoIva: false },
+            { id: 84, nombre: "jeringa 1 cc", valor: 300, exentoIva: false },
+            { id: 85, nombre: "Ketofen 10% cc", valor: 1000, exentoIva: false },
+            { id: 86, nombre: "Lidocaina amp 10cc", valor: 2500, exentoIva: false },
+            { id: 87, nombre: "Manitol dosis", valor: 3700, exentoIva: false },
+            { id: 88, nombre: "Mastilac cc", valor: 1200, exentoIva: false },
+            { id: 89, nombre: "Meloxican cc", valor: 1800, exentoIva: false },
+            { id: 90, nombre: "Metoclopramida amp", valor: 1200, exentoIva: false },
+            { id: 91, nombre: "Metronidazol 100ml", valor: 5500, exentoIva: false },
+            { id: 92, nombre: "Naxpet cc", valor: 1300, exentoIva: false },
+            { id: 93, nombre: "Ondansetron amp 4ml", valor: 3100, exentoIva: false },
+            { id: 94, nombre: "Oxitocina", valor: 900, exentoIva: false },
+            { id: 95, nombre: "Oxilen cc", valor: 900, exentoIva: false },
+            { id: 96, nombre: "Pañal unidad", valor: 300, exentoIva: false },
+            { id: 97, nombre: "Penicilina cc", valor: 900, exentoIva: false },
+            { id: 98, nombre: "Pileran cc", valor: 900, exentoIva: false },
+            { id: 99, nombre: "Propofol cc", valor: 2100, exentoIva: false },
+            { id: 100, nombre: "Ranitidina amp", valor: 1200, exentoIva: false },
+            { id: 101, nombre: "Ranitidina cc", valor: 1100, exentoIva: false },
+            { id: 102, nombre: "Rimadyl cc", valor: 2800, exentoIva: false },
+            { id: 103, nombre: "Sabanilla", valor: 900, exentoIva: false },
+            { id: 104, nombre: "Solución eutanasia cc", valor: 4500, exentoIva: false },
+            { id: 105, nombre: "Suero Fisiologico", valor: 2500, exentoIva: false },
+            { id: 106, nombre: "Suero glucosado 5% 20cc", valor: 3000, exentoIva: false },
+            { id: 107, nombre: "Suero glucosalino", valor: 2500, exentoIva: false },
+            { id: 108, nombre: "Suero politonico", valor: 2500, exentoIva: false },
+            { id: 109, nombre: "Suero Ringer lactato", valor: 2500, exentoIva: false },
+            { id: 110, nombre: "Tapón Amarillo", valor: 1100, exentoIva: false },
+            { id: 111, nombre: "Diopental un", valor: 16000, exentoIva: false },
+            { id: 112, nombre: "Tramadol amp", valor: 1200, exentoIva: false },
+            { id: 113, nombre: "Transfusión", valor: 37000, exentoIva: false },
+            { id: 114, nombre: "Venda coran", valor: 7100, exentoIva: false },
+            { id: 115, nombre: "Vetecaina cc", valor: 900, exentoIva: false },
+            { id: 116, nombre: "Vitamina C cc", valor: 900, exentoIva: false },
+            { id: 117, nombre: "Viviram cc", valor: 4300, exentoIva: false },
+            { id: 118, nombre: "Voluven", valor: 42000, exentoIva: false },
+            { id: 119, nombre: "Xilacina cc", valor: 1300, exentoIva: false }
+        ];
+
+        // Elementos del DOM
+        const itemSelect = document.getElementById('item-select');
+        const cantidadInput = document.getElementById('cantidad');
+        const agregarBtn = document.getElementById('agregar-item');
+        const itemsTable = document.getElementById('items-table').getElementsByTagName('tbody')[0];
+        const subtotalInput = document.getElementById('subtotal');
+        const totalExentoInput = document.getElementById('total-exento');
+        const totalAfectoInput = document.getElementById('total-afecto');
+        const ivaInput = document.getElementById('iva');
+        const aplicarIvaCheckbox = document.getElementById('aplicar-iva');
+        const totalInput = document.getElementById('total');
+        const abonoInput = document.getElementById('abono');
+        const saldoInput = document.getElementById('saldo');
+        const imprimirBtn = document.getElementById('imprimir');
+
+        // Llenar el select con los servicios
+        servicios.forEach(servicio => {
+            const option = document.createElement('option');
+            option.value = servicio.id;
+            option.textContent = servicio.nombre;
+            itemSelect.appendChild(option);
+        });
+
+        // Items seleccionados
+        let itemsSeleccionados = [];
+
+        // Agregar item al presupuesto
+        agregarBtn.addEventListener('click', () => {
+            const servicioId = parseInt(itemSelect.value);
+            if (!servicioId) return;
+
+            const cantidad = parseInt(cantidadInput.value) || 1;
+            const servicio = servicios.find(s => s.id === servicioId);
+            
+            if (servicio) {
+                const total = servicio.valor * cantidad;
+                
+                // Agregar a la lista de items seleccionados
+                const item = {
+                    id: Date.now(), // Id único para manipulación
+                    servicioId: servicio.id,
+                    nombre: servicio.nombre,
+                    valor: servicio.valor,
+                    cantidad: cantidad,
+                    total: total,
+                    exentoIva: servicio.exentoIva
+                };
+                
+                itemsSeleccionados.push(item);
+                
+                // Agregar a la tabla
+                const tr = document.createElement('tr');
+                tr.dataset.id = item.id;
+                tr.innerHTML = `
+                    <td>${servicio.nombre}</td>
+                    <td>${servicio.valor.toLocaleString('es-CL')}</td>
+                    <td>${cantidad}</td>
+                    <td>${total.toLocaleString('es-CL')}</td>
+                    <td>${servicio.exentoIva ? 'Sí' : 'No'}</td>
+                    <td>
+                        <button class="eliminar-btn" data-id="${item.id}">Eliminar</button>
+                    </td>
+                `;
+                itemsTable.appendChild(tr);
+                
+                // Resetear campos
+                itemSelect.value = "";
+                cantidadInput.value = "1";
+                
+                // Actualizar totales
+                calcularTotales();
+            }
+        });
+
+        // Eliminar item
+        itemsTable.addEventListener('click', (e) => {
+            if (e.target.classList.contains('eliminar-btn')) {
+                const id = parseInt(e.target.dataset.id);
+                itemsSeleccionados = itemsSeleccionados.filter(item => item.id !== id);
+                
+                const tr = document.querySelector(`tr[data-id="${id}"]`);
+                if (tr) tr.remove();
+                
+                calcularTotales();
+            }
+        });
+
+        // Calcular totales
+        function calcularTotales() {
+            let subtotal = 0;
+            let totalExento = 0;
+            let totalAfecto = 0;
+            
+            itemsSeleccionados.forEach(item => {
+                subtotal += item.total;
+                
+                if (item.exentoIva) {
+                    totalExento += item.total;
+                } else {
+                    totalAfecto += item.total;
+                }
+            });
+            
+            const iva = aplicarIvaCheckbox.checked ? totalAfecto * 0.19 : 0;
+            const total = subtotal + iva;
+            const abono = parseInt(abonoInput.value) || 0;
+            const saldo = total - abono;
+            
+            subtotalInput.value = subtotal.toLocaleString('es-CL');
+            totalExentoInput.value = totalExento.toLocaleString('es-CL');
+            totalAfectoInput.value = totalAfecto.toLocaleString('es-CL');
+            ivaInput.value = iva.toLocaleString('es-CL');
+            totalInput.value = total.toLocaleString('es-CL');
+            saldoInput.value = saldo.toLocaleString('es-CL');
+        }
+
+        // Eventos para recalcular totales
+        aplicarIvaCheckbox.addEventListener('change', calcularTotales);
+        abonoInput.addEventListener('input', calcularTotales);
+
+        // Imprimir presupuesto
+        imprimirBtn.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Inicializar fecha actual
+        document.getElementById('fecha').valueAsDate = new Date();
+    </script>
+</body>
+</html>
